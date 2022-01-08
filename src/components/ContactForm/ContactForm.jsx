@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import contactsActions from '../../redux/contacts/contacts-actions';
+import actions from '../../redux/contacts/contacts-actions';
 import PropTypes from 'prop-types';
 import FORM_CONFIG from 'formConfig';
 import styles from './ContactForm.module.css';
@@ -19,10 +19,13 @@ function Phonebook({ onAddContact }) {
   const handleSubmit = event => {
     event.preventDefault();
 
-    onAddContact({ name, number });
+    onAddContact(name, number);
+
     setName('');
     setNumber('');
   };
+
+  // useEffect(() => {}, [name, number]);
 
   return (
     <form onSubmit={handleSubmit} className={styles.Form}>
@@ -54,8 +57,7 @@ function Phonebook({ onAddContact }) {
 }
 
 const mapDispatchToProps = dispatch => ({
-  onAddContact: ({ name, number }) =>
-    dispatch(contactsActions.addContact(name, number)),
+  onAddContact: (name, number) => dispatch(actions.addContact(name, number)),
 });
 
 export default connect(null, mapDispatchToProps)(Phonebook);
@@ -67,7 +69,7 @@ FORM_CONFIG.PropTypes = {
   title: PropTypes.string.isRequired,
 };
 
-// Phonebook.propTypes = {
-//   name: PropTypes.string,
-//   number: PropTypes.string,
-// };
+Phonebook.propTypes = {
+  name: PropTypes.string,
+  number: PropTypes.string,
+};
