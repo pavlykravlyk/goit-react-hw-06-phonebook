@@ -1,47 +1,45 @@
-import { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import actions from '../../redux/contacts/contacts-actions';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import actions from 'redux/contacts/contacts-actions';
 import FORM_CONFIG from 'formConfig';
 import styles from './ContactForm.module.css';
 
-function Phonebook({ onAddContact }) {
+export default function Phonebook() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
-  const handleChange = event => {
-    const { name, value } = event.currentTarget;
-
+  const handleInputChange = ({ target: { name, value } }) => {
     name === 'name' && setName(value);
     name === 'number' && setNumber(value);
   };
 
-  const handleSubmit = event => {
+  const dispatch = useDispatch();
+
+  const handleFormSubmit = event => {
     event.preventDefault();
 
-    onAddContact(name, number);
+    name && number !== '' && dispatch(actions.addContact(name, number));
 
     setName('');
     setNumber('');
   };
 
-  // useEffect(() => {}, [name, number]);
-
   return (
-    <form onSubmit={handleSubmit} className={styles.Form}>
+    <form onSubmit={handleFormSubmit} className={styles.Form}>
       <ul className={styles.List}>
-        {FORM_CONFIG.map(({ type, name, pattern, title }) => (
-          <li key={name} className={styles.Item}>
+        {FORM_CONFIG.map(field => (
+          <li key={field.name} className={styles.Item}>
             <label className={styles.Label}>
-              {name}
+              {field.name}
               <input
                 className={styles.Input}
-                type={type}
-                name={name}
-                pattern={pattern}
-                title={title}
-                value={name[name]}
-                onChange={handleChange}
+                type={field.type}
+                name={field.name}
+                pattern={field.pattern}
+                title={field.title}
+                value={{ name, number }[field.name]}
+                onChange={handleInputChange}
                 required
               />
             </label>
@@ -56,20 +54,9 @@ function Phonebook({ onAddContact }) {
   );
 }
 
-const mapDispatchToProps = dispatch => ({
-  onAddContact: (name, number) => dispatch(actions.addContact(name, number)),
-});
-
-export default connect(null, mapDispatchToProps)(Phonebook);
-
 FORM_CONFIG.PropTypes = {
   type: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   pattern: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-};
-
-Phonebook.propTypes = {
-  name: PropTypes.string,
-  number: PropTypes.string,
 };

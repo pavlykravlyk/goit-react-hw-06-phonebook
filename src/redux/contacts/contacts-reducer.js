@@ -1,5 +1,4 @@
-import { combineReducers } from 'redux';
-import { createReducer } from '@reduxjs/toolkit';
+import { createReducer, combineReducers } from '@reduxjs/toolkit';
 import actions from './contacts-actions';
 import initContacts from '../../initContacts.json';
 
